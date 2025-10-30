@@ -1,12 +1,11 @@
 name: Deploy
 
 on:
-  # Run this workflow whenever a new commit is pushed to main.
-  push: {branches: [main]}
-  # Run this workflow once per day, at 10:15 UTC
-  schedule: [{cron: "15 10 * * *"}]
-  # Run this workflow when triggered manually in GitHub’s UI.
-  workflow_dispatch: {}
+  push:
+    branches: [main]
+  schedule:
+    - cron: "15 10 * * *"
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,16 +19,27 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache-dependency-path: hello-framework/package-lock.json  # 👈 important
+
+      - name: Install dependencies
+        working-directory: hello-framework  # 👈 move into subfolder
+        run: npm ci
+
+      - name: Build
+        working-directory: hello-framework
+        run: npm run dev
+
       - uses: actions/configure-pages@v4
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: hello-framework/dist  # 👈 path to built files
+
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
