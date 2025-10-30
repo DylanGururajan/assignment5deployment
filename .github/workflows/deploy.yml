@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         working-directory: hello-framework
-        run: npm run dev
+        run: npm run build
 
       - uses: actions/configure-pages@v4
 
