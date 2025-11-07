@@ -1,13 +1,10 @@
 name: Deploy Observable Framework site
 
 on:
-  # Deploy whenever you push to main
   push:
     branches: [main]
-  # Daily automatic rebuild (optional)
   schedule:
     - cron: "15 10 * * *"
-  # Manual trigger
   workflow_dispatch:
 
 jobs:
@@ -21,6 +18,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
+    defaults:
+      run:
+        working-directory: hello-framework  # 👈 All npm commands run here
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,19 +31,20 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: hello-framework/package-lock.json  # 👈 cache path fix
 
       - name: Install dependencies
         run: npm ci
 
-      # (Optional) Cache Observable data
+      # Optional caching of Observable data
       - id: date
         run: echo "date=$(TZ=America/Los_Angeles date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - id: cache-data
         uses: actions/cache@v4
         with:
-          path: src/.observablehq/cache
-          key: data-${{ hashFiles('src/data/*') }}-${{ steps.date.outputs.date }}
+          path: hello-framework/src/.observablehq/cache
+          key: data-${{ hashFiles('hello-framework/src/data/*') }}-${{ steps.date.outputs.date }}
 
       - name: Build site
         run: npm run build
@@ -53,7 +55,7 @@ jobs:
       - name: Upload built site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: hello-framework/dist  # 👈 build output folder
 
       - name: Deploy to GitHub Pages
         id: deployment
