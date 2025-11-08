@@ -97,7 +97,7 @@ function drugChart(data, {width} = {}) {
     .attr("text-anchor", "middle")
     .style("font-weight", 600)
     .style("font-size", "16px")
-    .text("Death Rate (ESTIMATE)");
+    .text("Death Rate (ESTIMATE per 100,000 people)");
 
   const line = d3.line()
     .x(d => x(d.YEAR))
@@ -175,7 +175,7 @@ function drugChart(data, {width} = {}) {
   note.style.marginTop = "8px";
   note.style.fontSize = "12px";
   note.style.color = "#444";
-  note.innerHTML = `<em>Estimate death rate from drug overdoses grouped by type of drug. Hover over a line to see what drug it represents. Note values are estimates</em>`;
+  note.innerHTML = `<em>Estimate death rate from drug overdoses grouped by type of drug. Hover over a line to see what drug it represents. Note values are estimates. The values are in the unit of deaths per 100,000 people</em>`;
   root.appendChild(note);
 
   return root;
