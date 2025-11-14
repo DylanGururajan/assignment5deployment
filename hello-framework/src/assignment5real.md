@@ -8,7 +8,7 @@ title: Assignment 5 Interactive Chart
 import * as d3 from "npm:d3";
 const drugs = await FileAttachment("data/drugs.csv").csv({typed: true});
 
-function drugChart(data, {width} = {}) {
+function drugChart(data, {width} = {}) { 
   const rows = data.filter(d =>
     String(d.STUB_LABEL).toLowerCase().trim() === "all persons" &&
     String(d.AGE).toLowerCase().trim() === "all ages"
@@ -175,7 +175,7 @@ function drugChart(data, {width} = {}) {
   note.style.marginTop = "8px";
   note.style.fontSize = "12px";
   note.style.color = "#444";
-  note.innerHTML = `<em>Estimate death rate from drug overdoses grouped by type of drug. Hover over a line to see what drug it represents. Note values are estimates</em>`;
+  note.innerHTML = `<em>Estimate death rate from drug overdoses grouped by type of drug. Hover over a line to see what drug it represents. Note values are estimates. The values are in the unit of deaths per 100,000 people</em>`;
   root.appendChild(note);
 
   return root;
