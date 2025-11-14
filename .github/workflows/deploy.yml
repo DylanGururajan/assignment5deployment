@@ -1,0 +1,62 @@
+name: Deploy Observable Framework site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "15 10 * * *"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    defaults:
+      run:
+        working-directory: hello-framework  # 👈 All npm commands run here
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hello-framework/package-lock.json  # 👈 cache path fix
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Optional caching of Observable data
+      - id: date
+        run: echo "date=$(TZ=America/Los_Angeles date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - id: cache-data
+        uses: actions/cache@v4
+        with:
+          path: hello-framework/src/.observablehq/cache
+          key: data-${{ hashFiles('hello-framework/src/data/*') }}-${{ steps.date.outputs.date }}
+
+      - name: Build site
+        run: npm run build
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload built site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: hello-framework/dist  # 👈 build output folder
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -97,7 +97,7 @@ function drugChart(data, {width} = {}) {
     .attr("text-anchor", "middle")
     .style("font-weight", 600)
     .style("font-size", "16px")
-    .text("Death Rate (ESTIMATE)");
+    .text("Death Rate (ESTIMATE per 100,000 people)");
 
   const line = d3.line()
     .x(d => x(d.YEAR))
